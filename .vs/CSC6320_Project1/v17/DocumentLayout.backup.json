@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\samue\\source\\repos\\CSC6320_Project1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{36AF8DE6-CF4B-45E8-B8AE-4A9E4FF97DAA}|CSC6320_Project1.vcxproj|C:\\Users\\samue\\source\\repos\\CSC6320_Project1\\CSC6320_Project1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{36AF8DE6-CF4B-45E8-B8AE-4A9E4FF97DAA}|CSC6320_Project1.vcxproj|solutionrelative:CSC6320_Project1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CSC6320_Project1.cpp",
+              "DocumentMoniker": "C:\\Users\\samue\\source\\repos\\CSC6320_Project1\\CSC6320_Project1.cpp",
+              "RelativeDocumentMoniker": "CSC6320_Project1.cpp",
+              "ToolTip": "C:\\Users\\samue\\source\\repos\\CSC6320_Project1\\CSC6320_Project1.cpp",
+              "RelativeToolTip": "CSC6320_Project1.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-06-25T11:37:13.682Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
