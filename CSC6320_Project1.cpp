@@ -227,7 +227,7 @@ void CalculateTurnaroundTimeFCFS(vector<vector<int>> &dataVectorList)
 
 // 1. [DONE] need case where previous process ends at the exact time the next process begins.
 // 2. [DONE] need case where previous process ends seconds before the next process begins.
-// 3. [IN PROGRESS] need case where next process is waiting for the previous process to end.
+// 3. [DONE] need case where next process is waiting for the previous process to end.
 // 4. need case where next process is waiting for mutliple previous processes to end.
 
 
@@ -238,11 +238,12 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
     int processCurrentlyRunning = 0;
     int waitTime = 0;
     int currentProcessIndex = 0;
-    bool waiting = false;
+    //bool waiting = false;
     bool inBetween = true;
     bool skipping = false;
+    bool executing = false;
 
-    while (currentTimeStamp != -1 && currentProcessIndex < dataVectorList.size())
+    while (currentProcessIndex < dataVectorList.size())
     {
         cout << "current time = " << currentTimeStamp << endl;
         
@@ -252,12 +253,14 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
         
         if (currentProcessArrivalTime == currentTimeStamp)
         {
-            cout << "currentProcessArrivalTime2 = " << currentProcessArrivalTime << endl;
+            //cout << "currentProcessArrivalTime == currentTimeStamp" << endl;
+            
             if (inBetween)
             {
                 // assign burst time.
                 processCurrentlyRunning = dataVectorList[currentProcessIndex][2];
                 inBetween = false;
+                executing = true;
             }
             else if (skipping)
             {
@@ -268,6 +271,8 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
         }
         else if (currentProcessArrivalTime > currentTimeStamp)
         {
+            //cout << "currentProcessArrivalTime > currentTimeStamp" << endl;
+
             if (!skipping)
             {
                 // assign burst time.
@@ -275,36 +280,40 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
                 skipping = true;
                 waitTime = 0;
                 inBetween = false;
+                executing = true;
             }
         }
         else if (currentProcessArrivalTime < currentTimeStamp)
         {
+            //cout << "currentProcessArrivalTime < currentTimeStamp" << endl;
 
-            if (!waiting)
+            if (!executing)
             {
-                // assign burst time.
-                processCurrentlyRunning = dataVectorList[currentProcessIndex][2];
-                inBetween = true;
-                waiting = true;
-                waitTime = 0;
+                // set the wait time because we know it now
+                // is previous process still running?
+                //for (int i = executing; i< currentProcessIndex; i++)
+                //{
+                    //must iterate from previous process running index to current index.
+                    // this can be many wait times for many previous processes that we
+                    // need to count up...
+                    // NOTE: we have the previous processes's wait times and burst times.
+                    // Maybe we can just add them up...
+                //}
+                
+
+                // set the wait time because we know it now
+                waitTime = currentTimeStamp - currentProcessArrivalTime;
+                processCurrentlyRunning = 0;
+
+                cout << "process " << dataVectorList[currentProcessIndex][0] << " waited " << waitTime << endl;
+                currentTimeStamp = currentTimeStamp + dataVectorList[currentProcessIndex][2];
+                
             }
-            else
-            {
-                waitTime++;
-                if ((currentProcessArrivalTime + waitTime) == currentTimeStamp)
-                {
-                    cout << "BINGO!!" << endl;
-                    inBetween = false;
-                    waiting = false;
-                }
-            }
+
+
         }
         
-        if (waiting)
-        {
-            cout << "Awaiting previous process completion..." << endl;
-        }
-        else if (skipping)
+        if (skipping)
         {
             cout << "Awaiting next process arrival..." << endl;
         }
@@ -313,9 +322,12 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
         {
             cout << "Process " << dataVectorList[currentProcessIndex][0] << " running !!!" << endl;
             processCurrentlyRunning--;
+
         }
         else
         {
+            executing = false;
+
             // save the wait time for each process in the dataVector.
             dataVectorList[currentProcessIndex].push_back(waitTime);
 
@@ -324,6 +336,7 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
             currentProcessIndex++;
             if (currentProcessIndex < dataVectorList.size())
             {
+                waitTime = 0;
                 inBetween = true;
                 currentProcessArrivalTime = dataVectorList[currentProcessIndex][1];
             }
