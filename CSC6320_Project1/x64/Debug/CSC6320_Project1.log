@@ -1,2 +1,2 @@
 ﻿  CSC6320_Project1.cpp
-  CSC6320_Project1.vcxproj -> C:\Users\samue\source\repos\CSC6320_Project1\x64\Debug\CSC6320_Project1.exe
+C:\Users\samue\source\repos\CSC6320_Project1\CSC6320_Project1.cpp(387,5): error C3861: 'DisplayGanttChart': identifier not found

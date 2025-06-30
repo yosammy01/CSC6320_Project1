@@ -8,23 +8,22 @@
 
 using namespace std;
 
+// ---------------------------------------------------------------------------
+// Debugging output - display the data stored in dataVectorList memory.
+// ---------------------------------------------------------------------------
 void PrintdataVectorList(vector<vector<int>> &dataVectorList)
 {
-    // ---------------------------------------------------------------------
-    // Debugging output - display the data stored in dataVectorList memory.
-    // ---------------------------------------------------------------------
-        cout << endl;
-        for (int i = 0; i < (int)dataVectorList.size(); i++)
+    cout << endl;
+    for (int i = 0; i < (int)dataVectorList.size(); i++)
+    {
+        cout << "dataVectorList[" << i << "] = ";
+        for (int j = 0; j < (int)dataVectorList[i].size(); j++)
         {
-            cout << "dataVectorList[" << i << "] = ";
-            for (int j = 0; j < (int)dataVectorList[i].size(); j++)
-            {
-                cout << dataVectorList[i][j] << " ";
-            }
-            cout << endl;
+            cout << dataVectorList[i][j] << " ";
         }
         cout << endl;
-        // ---------------------------------------------------------------------
+    }
+    cout << endl;
 }
 
 // ---------------------------------------------------------------------------
@@ -41,11 +40,11 @@ int Check_Format(int argc, char* argv[])
         cout << "[executable name] [path to file] [file name] [scheduling algorithm]\n" << endl;
         cout << "Example:" << endl;
         cout << "CSC6320_project1 " << "C:\\temp process.txt FCFS\n" << endl;
-        cout << "Sheduling algorithm codes:" << endl;
+        cout << "Supported sheduling algorithm codes:" << endl;
         cout << "First-Come, First-Served - FCFS" << endl;
         cout << "Shortest Job First - SJF" << endl;
-        cout << "Round Robin - RR" << endl;
-        cout << "Priority Scheduling - PS" << endl;
+        //cout << "Round Robin - RR" << endl;
+        //cout << "Priority Scheduling - PS" << endl;
         return 1;
     }
 
@@ -197,7 +196,7 @@ void SortFCFS(vector<vector<int>> &dataVectorList)
 // -------------------------------------------------------------------------
 // Calculate turnaround time for each process and add new "Turnaround" data
 // column to the dataVectors in the dataVectorList.
-// NOTE: Turnaround time is measured from submission to completeion.
+// NOTE: Turnaround time is measured from submission to completion.
 // NOTE: Turnaround time = Burst time, for the FCFS algorithm.
 // -------------------------------------------------------------------------
 void CalculateTurnaroundTimeFCFS(vector<vector<int>> &dataVectorList)
@@ -223,123 +222,148 @@ void CalculateTurnaroundTimeFCFS(vector<vector<int>> &dataVectorList)
 // NOTE: Wait time = Sum(Burst time all previous processes) with accounting
 // for arrival time, for the FCFS algorithm.
 // -------------------------------------------------------------------------
-
-
-// 1. [DONE] need case where previous process ends at the exact time the next process begins.
-// 2. [DONE] need case where previous process ends seconds before the next process begins.
-// 3. [DONE] need case where next process is waiting for the previous process to end.
-// 4. need case where next process is waiting for mutliple previous processes to end.
-
-
+// Test cases:
+// 1. [DONE] need case where previous process ends at the exact time the 
+// next process begins.
+// 2. [DONE] need case where previous process ends seconds before the next 
+// process begins.
+// 3. [DONE] need case where next process is waiting for the previous 
+// process to end.
+// 4. [DONE] need case where next process is waiting for mutliple previous 
+// processes to end.
 void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
 {
+    // state variables
     int currentTimeStamp = 0;
     int currentProcessArrivalTime = dataVectorList[0][1];
     int processCurrentlyRunning = 0;
     int waitTime = 0;
     int currentProcessIndex = 0;
-    //bool waiting = false;
     bool inBetween = true;
     bool skipping = false;
     bool executing = false;
+    int executingProcess = 0;
 
+    // simulate time passing
     while (currentProcessIndex < dataVectorList.size())
     {
+        // ---------------------------------------------------------------------
+        // Debugging output - display the data stored in dataVectorList memory.
+        // ---------------------------------------------------------------------
         cout << "current time = " << currentTimeStamp << endl;
+        // ---------------------------------------------------------------------
         
-
-        // if currentProcesssArrivalTime == current time or we are inBetwwen 
-        // processes, the next process is starting.
-        
+        // if currentProcesssArrivalTime == current time, the next process
+        // is beginning.
         if (currentProcessArrivalTime == currentTimeStamp)
         {
-            //cout << "currentProcessArrivalTime == currentTimeStamp" << endl;
-            
+            // in between last process ending and new process beginning
             if (inBetween)
             {
                 // assign burst time.
                 processCurrentlyRunning = dataVectorList[currentProcessIndex][2];
+
+                // set state variables.
                 inBetween = false;
                 executing = true;
+                executingProcess = currentProcessIndex;
             }
+            // skipping time cycles while waiting for the next process to arrive.
             else if (skipping)
             {
                 // assign burst time.
                 processCurrentlyRunning = dataVectorList[currentProcessIndex][2];
+
+                // set state variables.
                 skipping = false;
             }
         }
+        // the next process has not arrived yet. 
         else if (currentProcessArrivalTime > currentTimeStamp)
         {
-            //cout << "currentProcessArrivalTime > currentTimeStamp" << endl;
-
+            // not skipping time cycles while waiting for the next process. This
+            // is where we begin the logic to wait for the next process.
             if (!skipping)
             {
                 // assign burst time.
                 processCurrentlyRunning = dataVectorList[currentProcessIndex][2];
+
+                // set state variables.
                 skipping = true;
                 waitTime = 0;
                 inBetween = false;
                 executing = true;
             }
         }
+        // the next process arrived while a previous process was running.
         else if (currentProcessArrivalTime < currentTimeStamp)
         {
-            //cout << "currentProcessArrivalTime < currentTimeStamp" << endl;
-
+            // no process is currently executing - currenTimeStamp will exceed the 
+            // currentProcessArrivalTime during normal execution of a process.
             if (!executing)
             {
-                // set the wait time because we know it now
-                // is previous process still running?
-                //for (int i = executing; i< currentProcessIndex; i++)
-                //{
-                    //must iterate from previous process running index to current index.
-                    // this can be many wait times for many previous processes that we
-                    // need to count up...
-                    // NOTE: we have the previous processes's wait times and burst times.
-                    // Maybe we can just add them up...
-                //}
-                
-
-                // set the wait time because we know it now
+                // set the wait time for the next process
                 waitTime = currentTimeStamp - currentProcessArrivalTime;
                 processCurrentlyRunning = 0;
 
+                // ---------------------------------------------------------------------
+                // Debugging output - display the data stored in dataVectorList memory.
+                // ---------------------------------------------------------------------
                 cout << "process " << dataVectorList[currentProcessIndex][0] << " waited " << waitTime << endl;
+                // ---------------------------------------------------------------------
+
                 currentTimeStamp = currentTimeStamp + dataVectorList[currentProcessIndex][2];
-                
             }
 
 
         }
-        
+
+        // skipping time cycles while waiting for the next process to arrive.
         if (skipping)
         {
+            // ---------------------------------------------------------------------
+            // Debugging output - display the data stored in dataVectorList memory.
+            // ---------------------------------------------------------------------
             cout << "Awaiting next process arrival..." << endl;
+            // ---------------------------------------------------------------------
         }
         // if process is running, decrement its count by 1 time unit each loop
         else if (processCurrentlyRunning)
         {
+
+            // ---------------------------------------------------------------------
+            // Debugging output - display the data stored in dataVectorList memory.
+            // ---------------------------------------------------------------------
             cout << "Process " << dataVectorList[currentProcessIndex][0] << " running !!!" << endl;
+            // ---------------------------------------------------------------------
+
             processCurrentlyRunning--;
 
         }
+        // current process has completed execution
         else
         {
+            // set state variables
             executing = false;
 
             // save the wait time for each process in the dataVector.
             dataVectorList[currentProcessIndex].push_back(waitTime);
 
-            // start the next process and inidcate we are wating for the next
+            // start the next process and indicate we are wating for the next
             // process to begin.
             currentProcessIndex++;
+
+            // not at the end of the vectorDataList
             if (currentProcessIndex < dataVectorList.size())
             {
+                // set state variables.
                 waitTime = 0;
                 inBetween = true;
+
+                // get the next process's arrival time
                 currentProcessArrivalTime = dataVectorList[currentProcessIndex][1];
             }
+            // there are no more processes to execute.
             else
             {
                 break;
@@ -347,8 +371,8 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
 
         }
 
-        // if waiting for the next process, it starts in the same time the 
-        // previous process ends.
+        // in between the previous and next process and the next process starts at 
+        // the same time the previous process ends. So, do not increment the time.
         if (!inBetween)
         {
             currentTimeStamp++;
@@ -387,6 +411,8 @@ void SimulateFCFS(vector<vector<int>> &dataVectorList)
     // column to the datavectors in the dataVectorList.
     CalculateWaitTimeFCFS(dataVectorList);
 
+    // 3. display a Gantt Chart(Execution Order)
+    DisplayGanttChart(dataVectorList);
 }
 
 // ---------------------------------------------------------------------------
@@ -413,15 +439,15 @@ void SchedulingAlgortihm(vector<vector<int>> &dataVectorList, string algorithm)
     }
     // Round Robin - Each process gets a fixed time (time quantum), then the 
     // next process runs.
-    else if (algorithm == "RR")
-    {
-        cout << "Round Robin (RR) algorithm requested." << endl;
-    }
+    //else if (algorithm == "RR")
+    //{
+    //    cout << "Round Robin (RR) algorithm requested." << endl;
+    //}
     // Priority Scheduling - Processes with a higher priority run first.
-    else if (algorithm == "PS")
-    {
-        cout << "Priority Scheduling (PS) algorithm requested." << endl;
-    }
+    //else if (algorithm == "PS")
+    //{
+    //    cout << "Priority Scheduling (PS) algorithm requested." << endl;
+    //}
     else
     {
         cout << algorithm << " algorithm not supported." << endl;
