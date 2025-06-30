@@ -139,10 +139,61 @@ vector<vector<int>> GetVectorListOfDataVectors(ifstream& dataFile)
     // ---------------------------------------------------------------------
     // Debugging output - display the data stored in dataVectorList memory.
     // ---------------------------------------------------------------------
-    PrintdataVectorList(dataVectorList);
+    if (!(dataVectorList.size() == 0 || dataVectorList.size() == 1))
+    {
+        PrintdataVectorList(dataVectorList);
+    }
     // ---------------------------------------------------------------------
 
     return dataVectorList;
+}
+
+// ----------------------------------------------------------------------------
+// Shortest Job First (SJF) - The process with the smallest burst time runs first. 
+// 1. Sort the dataVectorList by Burst Time (dataVectorList[i][2])
+// ----------------------------------------------------------------------------
+void SortSJF(vector<vector<int>>& dataVectorList)
+{
+    // no sorting necessary if 0 or 1 process only
+    if (dataVectorList.size() == 0 || dataVectorList.size() == 1)
+    {
+        return;
+    }
+
+    int shortest;
+    vector<int> temp;
+
+    // loop though the dataVectors one-by-one
+    for (int i = 0; i < (int)dataVectorList.size() - 1; i++)
+    {
+        // assume current process in process list has shorter burst time than 
+        // remaining processes in the list.
+        shortest = i;
+
+        // loop though the remaining dataVectors one-by-one
+        for (int j = i + 1; j < (int)dataVectorList.size(); j++)
+        {
+            // if current earliest process's burst time is lobger than the next process,
+            // then set earliest to the next process.
+            if (dataVectorList[i][2] > dataVectorList[j][2])
+            {
+                shortest = j;
+            }
+
+            // now swap the new earliest process with the current process.
+            temp = dataVectorList[shortest];
+            dataVectorList[shortest] = dataVectorList[i];
+            dataVectorList[i] = temp;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Debugging output - display the data stored in dataVectorList memory.
+    // ---------------------------------------------------------------------
+    PrintdataVectorList(dataVectorList);
+    // ---------------------------------------------------------------------
+
+    return;
 }
 
 
@@ -197,14 +248,14 @@ void SortFCFS(vector<vector<int>> &dataVectorList)
 // Calculate turnaround time for each process and add new "Turnaround" data
 // column to the dataVectors in the dataVectorList.
 // NOTE: Turnaround time is measured from submission to completion.
-// NOTE: Turnaround time = Burst time, for the FCFS algorithm.
+// NOTE: Turnaround time = Wait time + Burst time, for the FCFS algorithm.
 // -------------------------------------------------------------------------
 void CalculateTurnaroundTimeFCFS(vector<vector<int>> &dataVectorList)
 {
     // loop through the data vectors and add the new column of data.
     for (int i=0; i<(int)dataVectorList.size(); i++)
     {
-        dataVectorList[i].push_back(dataVectorList[i][2]);
+        dataVectorList[i].push_back(dataVectorList[i][4] + dataVectorList[i][2]);
     }
 
     // ---------------------------------------------------------------------
@@ -231,6 +282,7 @@ void CalculateTurnaroundTimeFCFS(vector<vector<int>> &dataVectorList)
 // process to end.
 // 4. [DONE] need case where next process is waiting for mutliple previous 
 // processes to end.
+// -------------------------------------------------------------------------
 void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
 {
     // state variables
@@ -388,43 +440,131 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
     return;
 }
 
+// -------------------------------------------------------------------------
+// Calculate wait time for each process and add new "WaitTime" data column
+// to the dataVectors in the dataVectorList.
+// NOTE: Wait time = sum(Turnaround time of previous processes) - Arrival
+// time.
+// -------------------------------------------------------------------------
+// Calculate turnaround time for each process and add new "Turnaround" data
+// column to the dataVectors in the dataVectorList.
+// NOTE: Turnaround time is measured from submission to completion.
+// NOTE: Turnaround time = Wait time + Burst time, for the SJF algorithm.
+// -------------------------------------------------------------------------
+// Test cases:
+// 1. [DONE] need case where arrival time order is opposite direction to the 
+// Burst order.
+// 2. [DONE] need case where arrival time exactly matches the previous process
+// completion time.
+// 3. [DONE] need case where arrival times are over a second after the previous 
+// process completes - there is wait time.
+// -------------------------------------------------------------------------
+void CalculateWaitTimeAndTurnaroundSJF(vector<vector<int>>& dataVectorList)
+{
+    int waitTime = 0;
+    int turnaroundTime = 0;
+    int burstTime = 0;
+    int arrivalTime = 0;
+
+    // loop through dataVectorList
+    for (int i = 0; i < dataVectorList.size(); i++)
+    {
+        waitTime = 0;
+        burstTime = dataVectorList[i][2];
+
+        // first process has no wait time and turnaroundTime = Burst time.
+        if (i == 0)
+        {
+            turnaroundTime = burstTime;
+            dataVectorList[i].push_back(waitTime);
+            dataVectorList[i].push_back(turnaroundTime);
+            continue;
+        }
+
+        // calculate waitTime
+        // waitTime = sum(all previous turnaroundTime) - Arrival time.
+        for (int j=i-1; j>=0; j--)
+        {
+            // the first process has turnaroundTime = Burst time.
+            // we need to add the arrival time to the wait time for the
+            // first process, to calculate the proceeding wait process 
+            // waitTimes.
+            if (j==0)
+            {
+                waitTime = waitTime + dataVectorList[j][5] + dataVectorList[j][1];
+            }
+            // other processes have turnaroundTime = waitTime + burstTime
+            else
+            {
+                waitTime = waitTime + dataVectorList[j][2];
+            }
+        }
+        arrivalTime = dataVectorList[i][1];
+        waitTime = waitTime - arrivalTime;
+        if (waitTime < 0)
+        {
+            waitTime = 0;
+        }
+        dataVectorList[i].push_back(waitTime);
+
+        // calculate turnaroundTime
+        turnaroundTime = waitTime + burstTime;
+        dataVectorList[i].push_back(turnaroundTime);
+    }
+
+    // ---------------------------------------------------------------------
+    // Debugging output - display the data stored in dataVectorList memory.
+    // ---------------------------------------------------------------------
+    PrintdataVectorList(dataVectorList);
+    // ---------------------------------------------------------------------
+
+    return;
+}
 
 // -------------------------------------------------------------------------
-// NOTE: Turnaround time is time for process to complete from arrival to 
-// done.
-// NOTE: Burst time time is time for process to complete it's cpu and i/o 
-// cycle.
+// Simulate the SJF algorithm on the process list
+// 
+// NOTE: Burst time is time for process to complete it's cpu cycle.
+// -------------------------------------------------------------------------
+void SimulateSJF(vector<vector<int>>& dataVectorList)
+{
+    // 1. calculate wait time for each process and add new "WaitTime" data
+// column to the dataVectors in the dataVectorList.
+    CalculateWaitTimeAndTurnaroundSJF(dataVectorList);
 
+    // 3. display a Gantt Chart(Execution Order)
+    //DisplayGanttChart(dataVectorList);
+}
+
+// -------------------------------------------------------------------------
+// Simulate the FCFS algorithm on the process list
+// 
+// NOTE: Arrival time is time process arrived in the waiting queue.
 // -------------------------------------------------------------------------
 void SimulateFCFS(vector<vector<int>> &dataVectorList)
 {
-    int timeStamp = 0;
-    int waitTime = 0;
-    int turnaroundTime = 0;
-    vector<vector<int>> newDataVector;
+    // 1. calculate wait time for each process and add new "WaitTime" data
+    // column to the dataVectors in the dataVectorList.
+    CalculateWaitTimeFCFS(dataVectorList);
 
-    // 1. Calculate turnaround time for each process and add new "Turnaround"
+    // 2. Calculate turnaround time for each process and add new "Turnaround"
     // data column to the dataVectors in the dataVectorList.
     CalculateTurnaroundTimeFCFS(dataVectorList);
 
-    // 2. calculate wait time for each process and add new "WaitTime" data
-    // column to the datavectors in the dataVectorList.
-    CalculateWaitTimeFCFS(dataVectorList);
-
     // 3. display a Gantt Chart(Execution Order)
-    DisplayGanttChart(dataVectorList);
+    //DisplayGanttChart(dataVectorList);
 }
 
 // ---------------------------------------------------------------------------
-// 1. checks the requested scheduling algotithm and calls specific functions 
+// 1. checks the requested scheduling algorithm and calls specific functions 
 // to handle the specific algorithms.
 // ---------------------------------------------------------------------------
 void SchedulingAlgortihm(vector<vector<int>> &dataVectorList, string algorithm)
 {
-
     // First Come, First Served - The first process that arrives runs first.
-    if (algorithm == "FCFS")
+    if (algorithm == "FCFS" || algorithm == "fcfs")
     {
+        cout << "First Come, First Served (FCFS) algorithm requested." << endl;
         // 1. sort the processes based on arrival time (dataVector[1]).
         SortFCFS(dataVectorList);
 
@@ -433,9 +573,14 @@ void SchedulingAlgortihm(vector<vector<int>> &dataVectorList, string algorithm)
 
     }
     // Shortest Job First - The process with the smallest burst time runs first.
-    else if (algorithm == "SJF")
+    else if (algorithm == "SJF" || algorithm == "sjf")
     {
         cout << "Shortest Job First (SJF) algorithm requested." << endl;
+        // 1. sort the processes based on arrival time (dataVector[1]).
+        SortSJF(dataVectorList);
+
+        // 2. simulate the FCFS process scheduling.
+        SimulateSJF(dataVectorList);
     }
     // Round Robin - Each process gets a fixed time (time quantum), then the 
     // next process runs.
@@ -477,6 +622,12 @@ int main(int argc, char* argv[])
     //read data line-by-line from the data file and store data in a vector of
     // integer vectors.
     vector<vector<int>> dataVectorList = GetVectorListOfDataVectors(dataFile);
+
+    if (dataVectorList.size() == 1 || dataVectorList.size() == 0)
+    {
+        cout << "There are no processes to be scheduled." << endl;
+        return 0;
+    }
 
     // ----------------------------------------------
     // Step 2: Implement Two Scheduling Algorithms
