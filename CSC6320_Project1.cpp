@@ -7,6 +7,7 @@
 #include <vector>
 
 using namespace std;
+using std::cout;
 
 // ---------------------------------------------------------------------------
 // Debugging output - display the data stored in dataVectorList memory.
@@ -579,6 +580,123 @@ void CalculateWaitTimeAndTurnaroundSJF(vector<vector<int>>& dataVectorList)
     return;
 }
 
+void PrintOutGanttChart(vector<vector<int>> &startAndEndTimes)
+{
+    int currentTimeStamp = 0;
+
+    cout << "GANTT CHART (Execution Order):" << endl;
+    cout << "|     Process     | |     Process     |..." << endl;
+    cout << "|StartTime EndTime| |StartTime EndTime|..." << endl;
+    cout << endl;
+
+    // loop through and print processes out in order from first to last.
+    for (int i = 0; i < (int)startAndEndTimes.size(); i++)
+    {
+        // first print out pipe "|".
+        cout << "|";
+        cout << "P" << startAndEndTimes[i][0];
+        cout << " | ";
+    }
+    cout << endl;
+
+    // loop though and print start and end times of each process.
+    for (int i = 0; i < (int)startAndEndTimes.size(); i++)
+    {
+        // first print out pipe "|".
+        cout << "|";
+
+        // print out the start time
+        cout << startAndEndTimes[i][1];
+
+        // print out spaces and end time of process.
+        cout << " ";
+        cout << startAndEndTimes[i][2];
+        cout << "| ";
+    }
+
+    cout << endl;
+    cout << endl;
+    return;
+}
+
+// diplay output in Gantt Chart
+void DisplayGanttChart(vector<vector<int>>& dataVectorList)
+{
+    cout << "+DisplayGanttChart" << endl;
+
+    vector<vector<int>> startAndEndTimes;
+    int startTime = 0;
+    int endTime = 0;
+    int processId = 0;
+
+    // loop through each dataVector and save the start and end times of each 
+    // process in a new data structure, to use when displaying the Gantt Chart.
+    // Start Time = Arrival Time + Wait Time.
+    // End Time = Arrival Time + Turnaround Time;
+    for (int i=0; i<(int)dataVectorList.size(); i++)
+    {
+        processId = dataVectorList[i][0];
+        startTime = dataVectorList[i][1] + dataVectorList[i][4];
+        endTime = dataVectorList[i][1] + dataVectorList[i][5];
+        startAndEndTimes.push_back({processId, startTime, endTime });
+    }
+
+    // ---------------------------------------------------------------------
+    // Debugging output - display the data stored in dataVectorList memory.
+    // ---------------------------------------------------------------------
+    cout << "ProcessId, Start Time, End Time" << endl;
+    PrintdataVectorList(startAndEndTimes);
+    // ---------------------------------------------------------------------
+
+    // display the gantt chart
+    PrintOutGanttChart(startAndEndTimes);
+
+    cout << "-DisplayGanttChart" << endl;
+    return;
+}
+
+// display the statistics for the process scheduling.
+// 1. Waiting Time(WT) for each process
+// 2. Turnaround Time(TAT) for each process
+// 3. Average WT and TAT
+void DisplayStatistics(vector<vector<int>> dataVectorList)
+{
+    cout << "+DisplayStatistics" << endl;
+    
+    float averageWaitTime = 0;
+    float averageTurnaroundTime = 0;
+    
+
+    // Waiting Time(WT) for each process
+    cout << endl;
+    cout << "Wait Times:" << endl;
+    for (int i=0; i<(int)dataVectorList.size(); i++)
+    {
+        averageWaitTime = averageWaitTime + dataVectorList[i][4];
+        cout << "WT(P" << dataVectorList[i][0] << ") = " << dataVectorList[i][4] << endl;
+    }
+    averageWaitTime = averageWaitTime / dataVectorList.size();
+    cout << endl;
+
+    // Turnaround Time(TAT) for each process
+    cout << "Turnaround Times:" << endl;
+    for (int i = 0; i < (int)dataVectorList.size(); i++)
+    {
+        averageTurnaroundTime = averageTurnaroundTime + dataVectorList[i][5];
+        cout << "TAT(P" << dataVectorList[i][0] << ") = " << dataVectorList[i][5] << endl;
+    }
+    averageTurnaroundTime = averageTurnaroundTime / dataVectorList.size();
+    cout << endl;
+
+    // Average WT and TAT
+    cout << "Average Wait Time (WT) = " << averageWaitTime << endl;
+    cout << "Average Turnaround Time (TAT) = " << averageTurnaroundTime << endl;
+    cout << endl;
+
+    cout << "-DisplayStatistics" << endl;
+    return;
+}
+
 // -------------------------------------------------------------------------
 // Simulate the SJF algorithm on the process list
 // 
@@ -593,7 +711,10 @@ void SimulateSJF(vector<vector<int>>& dataVectorList)
     CalculateWaitTimeAndTurnaroundSJF(dataVectorList);
 
     // 3. display a Gantt Chart(Execution Order)
-    //DisplayGanttChart(dataVectorList);
+    DisplayGanttChart(dataVectorList);
+
+    // 4. print out statistics
+    DisplayStatistics(dataVectorList);
 
     cout << "-SimulateSJF" << endl;
     return;
@@ -616,8 +737,11 @@ void SimulateFCFS(vector<vector<int>> &dataVectorList)
     CalculateTurnaroundTimeFCFS(dataVectorList);
 
     // 3. display a Gantt Chart(Execution Order)
-    //DisplayGanttChart(dataVectorList);
+    DisplayGanttChart(dataVectorList);
 
+    // 4. print out statistics
+    DisplayStatistics(dataVectorList);
+    
     cout << "-SimulateFCFS" << endl;
     return;
 }
