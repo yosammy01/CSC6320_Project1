@@ -39,7 +39,7 @@ void PrintdataVectorList(vector<vector<int>> &dataVectorList)
 // ---------------------------------------------------------------------------
 int Check_Format(int argc, char* argv[])
 {
-    cout << "+Check_Format" << endl;
+    //cout << "+Check_Format" << endl;
 
     if (argc != 4)
     {
@@ -47,7 +47,7 @@ int Check_Format(int argc, char* argv[])
         cout << "Proper input format:" << endl;
         cout << "[executable name] [path to file] [file name] [scheduling algorithm]\n" << endl;
         cout << "Example:" << endl;
-        cout << "CSC6320_project1 " << "C:\\temp process.txt FCFS\n" << endl;
+        cout << "CSC6320_project1 " << "C:\\temp processes.txt FCFS\n" << endl;
         cout << "Supported sheduling algorithm codes:" << endl;
         cout << "First-Come, First-Served - FCFS" << endl;
         cout << "Shortest Job First - SJF" << endl;
@@ -60,17 +60,17 @@ int Check_Format(int argc, char* argv[])
     // -------------------------------------------------------------
     // Debugging output - loop through arguments and print them out
     // -------------------------------------------------------------
-    cout << "Argument count is correct." << endl;
-    cout << "Arguments = " << argc << endl;
-    int i = 0;
-    for (int i = 0; i < argc; i++)
-    {
-        cout << "Argument " << i << " = " << argv[i] << endl;
-    }
+    //cout << "Argument count is correct." << endl;
+    //cout << "Arguments = " << argc << endl;
+    //int i = 0;
+    //for (int i = 0; i < argc; i++)
+    //{
+    //    cout << "Argument " << i << " = " << argv[i] << endl;
+    //}
     // -------------------------------------------------------------
 
-    cout << "-Check_Format" << endl;
-    cout << endl;
+    //cout << "-Check_Format" << endl;
+    //cout << endl;
     return 0;
 }
 
@@ -81,12 +81,12 @@ int Check_Format(int argc, char* argv[])
 // ---------------------------------------------------------------------------
 ifstream ReadFile(char* argv[])
 {
-    cout << "+ReadFile" << endl;
+    //cout << "+ReadFile" << endl;
 
     string filePath = argv[1];
     filePath.append("\\");
     filePath.append(argv[2]);
-    cout << "File path = " + filePath << endl;
+    //cout << "File path = " + filePath << endl;
     ifstream dataFile(filePath);
 
     if (!dataFile.is_open())
@@ -96,8 +96,8 @@ ifstream ReadFile(char* argv[])
         return dataFile;
     }
 
-    cout << "-ReadFile" << endl;
-    cout << endl;
+    //cout << "-ReadFile" << endl;
+    //cout << endl;
     return dataFile;
 }
 
@@ -115,13 +115,14 @@ ifstream ReadFile(char* argv[])
 // ---------------------------------------------------------------------------
 vector<vector<int>> GetVectorListOfDataVectors(ifstream& dataFile)
 {
-    cout << "+GetVectorListOfDataVectors" << endl;
+    //cout << "+GetVectorListOfDataVectors" << endl;
 
     vector<int> dataVector = { 0,0,0,0 };
     vector<vector<int>> dataVectorList;
     string line;
     string word;
 
+    cout << endl;
     cout << "File Contents:" << endl;
     int lineNumber = 0;
     while (getline(dataFile, line))
@@ -153,11 +154,11 @@ vector<vector<int>> GetVectorListOfDataVectors(ifstream& dataFile)
     // ---------------------------------------------------------------------
     if (!(dataVectorList.size() == 0 || dataVectorList.size() == 1))
     {
-        PrintdataVectorList(dataVectorList);
+        //PrintdataVectorList(dataVectorList);
     }
     // ---------------------------------------------------------------------
 
-    cout << "-GetVectorListOfDataVectors" << endl;
+    //cout << "-GetVectorListOfDataVectors" << endl;
     return dataVectorList;
 }
 
@@ -167,12 +168,12 @@ vector<vector<int>> GetVectorListOfDataVectors(ifstream& dataFile)
 // ----------------------------------------------------------------------------
 void SortSJF(vector<vector<int>>& dataVectorList)
 {
-    cout << "+SortSJF" << endl;
+    //cout << "+SortSJF" << endl;
 
     // no sorting necessary if 0 or 1 process only
     if (dataVectorList.size() == 0 || dataVectorList.size() == 1)
     {
-        cout << "-SortSJF" << endl;
+        //cout << "-SortSJF" << endl;
         return;
     }
 
@@ -233,10 +234,10 @@ void SortSJF(vector<vector<int>>& dataVectorList)
     // ---------------------------------------------------------------------
     // Debugging output - display the data stored in dataVectorList memory.
     // ---------------------------------------------------------------------
-    PrintdataVectorList(dataVectorList);
+    //PrintdataVectorList(dataVectorList);
     // ---------------------------------------------------------------------
 
-    cout << "-SortSJF" << endl;
+    //cout << "-SortSJF" << endl;
     return;
 }
 
@@ -247,12 +248,12 @@ void SortSJF(vector<vector<int>>& dataVectorList)
 // ----------------------------------------------------------------------------
 void SortFCFS(vector<vector<int>> &dataVectorList)
 {
-    cout << "+SortFCFS" << endl;
+    //cout << "+SortFCFS" << endl;
 
     // no sorting necessary if 0 or 1 process only
     if (dataVectorList.size() == 0 || dataVectorList.size() == 1)
     {
-        cout << "-SortFCFS" << endl;
+        //cout << "-SortFCFS" << endl;
         return;
     }
 
@@ -285,10 +286,10 @@ void SortFCFS(vector<vector<int>> &dataVectorList)
     // ---------------------------------------------------------------------
     // Debugging output - display the data stored in dataVectorList memory.
     // ---------------------------------------------------------------------
-    PrintdataVectorList(dataVectorList);
+    //PrintdataVectorList(dataVectorList);
     // ---------------------------------------------------------------------
 
-    cout << "-SortFCFS" << endl;
+    //cout << "-SortFCFS" << endl;
     return;
 }
 
@@ -310,7 +311,7 @@ void SortFCFS(vector<vector<int>> &dataVectorList)
 // -------------------------------------------------------------------------
 void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
 {
-    cout << "+CalculateWaitTimeFCFS" << endl;
+    //cout << "+CalculateWaitTimeFCFS" << endl;
 
     // state variables
     int currentTimeStamp = 0;
@@ -323,13 +324,14 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
     bool executing = false;
     int executingProcess = 0;
 
+
     // simulate time passing
     while (currentProcessIndex < dataVectorList.size())
     {
         // ---------------------------------------------------------------------
         // Debugging output - display the data stored in dataVectorList memory.
         // ---------------------------------------------------------------------
-        cout << "current time = " << currentTimeStamp << endl;
+        //cout << "current time = " << currentTimeStamp << endl;
         // ---------------------------------------------------------------------
         
         // if currentProcesssArrivalTime == current time, the next process
@@ -388,7 +390,7 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
                 // ---------------------------------------------------------------------
                 // Debugging output - display the data stored in dataVectorList memory.
                 // ---------------------------------------------------------------------
-                cout << "process " << dataVectorList[currentProcessIndex][0] << " waited " << waitTime << endl;
+                //cout << "process " << dataVectorList[currentProcessIndex][0] << " waited " << waitTime << endl;
                 // ---------------------------------------------------------------------
 
                 currentTimeStamp = currentTimeStamp + dataVectorList[currentProcessIndex][2];
@@ -403,7 +405,7 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
             // ---------------------------------------------------------------------
             // Debugging output - display the data stored in dataVectorList memory.
             // ---------------------------------------------------------------------
-            cout << "Awaiting next process arrival..." << endl;
+            //cout << "Awaiting next process arrival..." << endl;
             // ---------------------------------------------------------------------
         }
         // if process is running, decrement its count by 1 time unit each loop
@@ -413,7 +415,7 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
             // ---------------------------------------------------------------------
             // Debugging output - display the data stored in dataVectorList memory.
             // ---------------------------------------------------------------------
-            cout << "Process " << dataVectorList[currentProcessIndex][0] << " running !!!" << endl;
+            //cout << "Process " << dataVectorList[currentProcessIndex][0] << " running !!!" << endl;
             // ---------------------------------------------------------------------
 
             processCurrentlyRunning--;
@@ -461,10 +463,10 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
     // ---------------------------------------------------------------------
     // Debugging output - display the data stored in dataVectorList memory.
     // ---------------------------------------------------------------------
-    PrintdataVectorList(dataVectorList);
+    //PrintdataVectorList(dataVectorList);
     // ---------------------------------------------------------------------
 
-    cout << "-CalculateWaitTimeFCFS" << endl;
+    //cout << "-CalculateWaitTimeFCFS" << endl;
     return;
 }
 
@@ -477,7 +479,7 @@ void CalculateWaitTimeFCFS(vector<vector<int>>& dataVectorList)
 // -------------------------------------------------------------------------
 void CalculateTurnaroundTimeFCFS(vector<vector<int>>& dataVectorList)
 {
-    cout << "+CalculateTurnaroundTimeFCFS" << endl;
+    //cout << "+CalculateTurnaroundTimeFCFS" << endl;
 
     // loop through the data vectors and add the new column of data.
     for (int i = 0; i < (int)dataVectorList.size(); i++)
@@ -488,10 +490,10 @@ void CalculateTurnaroundTimeFCFS(vector<vector<int>>& dataVectorList)
     // ---------------------------------------------------------------------
     // Debugging output - display the data stored in dataVectorList memory.
     // ---------------------------------------------------------------------
-    PrintdataVectorList(dataVectorList);
+    //PrintdataVectorList(dataVectorList);
     // ---------------------------------------------------------------------
 
-    cout << "-CalculateTurnaroundTimeFCFS" << endl;
+    //cout << "-CalculateTurnaroundTimeFCFS" << endl;
     return;
 }
 
@@ -516,7 +518,7 @@ void CalculateTurnaroundTimeFCFS(vector<vector<int>>& dataVectorList)
 // -------------------------------------------------------------------------
 void CalculateWaitTimeAndTurnaroundSJF(vector<vector<int>>& dataVectorList)
 {
-    cout << "+CalculateWaitTimeAndTurnaroundSJF" << endl;
+    //cout << "+CalculateWaitTimeAndTurnaroundSJF" << endl;
 
     int waitTime = 0;
     int turnaroundTime = 0;
@@ -573,10 +575,10 @@ void CalculateWaitTimeAndTurnaroundSJF(vector<vector<int>>& dataVectorList)
     // ---------------------------------------------------------------------
     // Debugging output - display the data stored in dataVectorList memory.
     // ---------------------------------------------------------------------
-    PrintdataVectorList(dataVectorList);
+    //PrintdataVectorList(dataVectorList);
     // ---------------------------------------------------------------------
 
-    cout << "-CalculateWaitTimeAndTurnaroundSJF" << endl;
+    //cout << "-CalculateWaitTimeAndTurnaroundSJF" << endl;
     return;
 }
 
@@ -584,9 +586,10 @@ void PrintOutGanttChart(vector<vector<int>> &startAndEndTimes)
 {
     int currentTimeStamp = 0;
 
+    cout << endl;
     cout << "GANTT CHART (Execution Order):" << endl;
-    cout << "|     Process     | |     Process     |..." << endl;
-    cout << "|StartTime EndTime| |StartTime EndTime|..." << endl;
+    cout << "|   1st Process   | |   2nd Process   | |   3rd Process   |..." << endl;
+    cout << "|StartTime EndTime| |StartTime EndTime| |StartTime EndTime|..." << endl;
     cout << endl;
 
     // loop through and print processes out in order from first to last.
@@ -622,7 +625,7 @@ void PrintOutGanttChart(vector<vector<int>> &startAndEndTimes)
 // diplay output in Gantt Chart
 void DisplayGanttChart(vector<vector<int>>& dataVectorList)
 {
-    cout << "+DisplayGanttChart" << endl;
+    //cout << "+DisplayGanttChart" << endl;
 
     vector<vector<int>> startAndEndTimes;
     int startTime = 0;
@@ -644,14 +647,14 @@ void DisplayGanttChart(vector<vector<int>>& dataVectorList)
     // ---------------------------------------------------------------------
     // Debugging output - display the data stored in dataVectorList memory.
     // ---------------------------------------------------------------------
-    cout << "ProcessId, Start Time, End Time" << endl;
-    PrintdataVectorList(startAndEndTimes);
+    //cout << "ProcessId, Start Time, End Time" << endl;
+    //PrintdataVectorList(startAndEndTimes);
     // ---------------------------------------------------------------------
 
     // display the gantt chart
     PrintOutGanttChart(startAndEndTimes);
 
-    cout << "-DisplayGanttChart" << endl;
+    //cout << "-DisplayGanttChart" << endl;
     return;
 }
 
@@ -661,14 +664,12 @@ void DisplayGanttChart(vector<vector<int>>& dataVectorList)
 // 3. Average WT and TAT
 void DisplayStatistics(vector<vector<int>> dataVectorList)
 {
-    cout << "+DisplayStatistics" << endl;
+    //cout << "+DisplayStatistics" << endl;
     
     float averageWaitTime = 0;
     float averageTurnaroundTime = 0;
-    
 
     // Waiting Time(WT) for each process
-    cout << endl;
     cout << "Wait Times:" << endl;
     for (int i=0; i<(int)dataVectorList.size(); i++)
     {
@@ -693,7 +694,7 @@ void DisplayStatistics(vector<vector<int>> dataVectorList)
     cout << "Average Turnaround Time (TAT) = " << averageTurnaroundTime << endl;
     cout << endl;
 
-    cout << "-DisplayStatistics" << endl;
+    //cout << "-DisplayStatistics" << endl;
     return;
 }
 
@@ -704,7 +705,7 @@ void DisplayStatistics(vector<vector<int>> dataVectorList)
 // -------------------------------------------------------------------------
 void SimulateSJF(vector<vector<int>>& dataVectorList)
 {
-    cout << "+SimulateSJF" << endl;
+    //cout << "+SimulateSJF" << endl;
 
     // 1. calculate wait time for each process and add new "WaitTime" data
 // column to the dataVectors in the dataVectorList.
@@ -716,7 +717,7 @@ void SimulateSJF(vector<vector<int>>& dataVectorList)
     // 4. print out statistics
     DisplayStatistics(dataVectorList);
 
-    cout << "-SimulateSJF" << endl;
+    //cout << "-SimulateSJF" << endl;
     return;
 }
 
@@ -727,7 +728,7 @@ void SimulateSJF(vector<vector<int>>& dataVectorList)
 // -------------------------------------------------------------------------
 void SimulateFCFS(vector<vector<int>> &dataVectorList)
 {
-    cout << "+SimulateFCFS" << endl;
+    //cout << "+SimulateFCFS" << endl;
     // 1. calculate wait time for each process and add new "WaitTime" data
     // column to the dataVectors in the dataVectorList.
     CalculateWaitTimeFCFS(dataVectorList);
@@ -742,7 +743,7 @@ void SimulateFCFS(vector<vector<int>> &dataVectorList)
     // 4. print out statistics
     DisplayStatistics(dataVectorList);
     
-    cout << "-SimulateFCFS" << endl;
+    //cout << "-SimulateFCFS" << endl;
     return;
 }
 
@@ -752,10 +753,11 @@ void SimulateFCFS(vector<vector<int>> &dataVectorList)
 // ---------------------------------------------------------------------------
 void SchedulingAlgortihm(vector<vector<int>> &dataVectorList, string algorithm)
 {
-    cout << "+SchedulingAlgortihm" << endl;
+    //cout << "+SchedulingAlgortihm" << endl;
     // First Come, First Served - The first process that arrives runs first.
     if (algorithm == "FCFS" || algorithm == "fcfs")
     {
+        cout << endl;
         cout << "First Come, First Served (FCFS) algorithm requested." << endl;
         // 1. sort the processes based on arrival time (dataVector[1]).
         SortFCFS(dataVectorList);
@@ -767,6 +769,7 @@ void SchedulingAlgortihm(vector<vector<int>> &dataVectorList, string algorithm)
     // Shortest Job First - The process with the smallest burst time runs first.
     else if (algorithm == "SJF" || algorithm == "sjf")
     {
+        cout << endl;
         cout << "Shortest Job First (SJF) algorithm requested." << endl;
         // 1. sort the processes based on arrival time (dataVector[1]).
         SortSJF(dataVectorList);
@@ -790,7 +793,7 @@ void SchedulingAlgortihm(vector<vector<int>> &dataVectorList, string algorithm)
         cout << algorithm << " algorithm not supported." << endl;
     }
 
-    cout << "-SchedulingAlgortihm" << endl;
+    //cout << "-SchedulingAlgortihm" << endl;
     return;
 }
 
